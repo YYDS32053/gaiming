@@ -54,7 +54,7 @@ public class SystemServiceHook {
         return preloadDex;
     }
 
-    // 服务端处理请求
+    // 服务端处理请求.
     public static boolean handleTransaction(int code, Parcel reply) throws Exception {
         if (code == ServerConfig.DEX_TRANSACTION_CODE) {
             File jarFile = new File("/system/framework/myjar.jar");
