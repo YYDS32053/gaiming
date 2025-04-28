@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
           distribution: 'temurin'
           java-version: '8'
 
-      - name: 读取版本号（使用xmllint解析）
+      - name: 读取版本号（用xmllint）
         id: version
         run: |
           sudo apt-get update
@@ -40,5 +40,6 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           name: Release v${{ steps.version.outputs.version }}
           files: target/*.jar
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
