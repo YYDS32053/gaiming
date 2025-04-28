@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     branches:
-      - main
+      - ceshi
 
 jobs:
   build-and-release:
