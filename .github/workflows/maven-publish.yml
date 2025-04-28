@@ -19,10 +19,12 @@ jobs:
           distribution: 'temurin'
           java-version: '8'
 
-      - name: 读取版本号（直接读取pom.xml）
+      - name: 读取版本号（使用xmllint解析）
         id: version
         run: |
-          version=$(grep -m 1 '<version>' pom.xml | sed 's/.*<version>.*<\/version>.*/\1/')
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
+          version=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "version=$version" >> $GITHUB_OUTPUT
 
