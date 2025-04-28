@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     branches:
-      - main
+      - ceshi
 
 jobs:
   build:
@@ -21,6 +21,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '8'
+
+      - name: 安装 Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          sdk-version: '30'
 
       - name: 读取版本号（使用xmllint解析）
         id: version
