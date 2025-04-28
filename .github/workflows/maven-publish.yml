@@ -1,5 +1,8 @@
 name: Build and Release Java Project
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
