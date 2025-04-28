@@ -26,6 +26,11 @@ jobs:
         uses: android-actions/setup-android@v2
         with:
           sdk-version: '30'
+      - name: 下载 android.jar
+        run: |
+          mkdir -p libs
+          wget -O libs/android.jar https://repo1.maven.org/maven2/com/google/android/android/30/android-30.jar || \
+          cp $ANDROID_HOME/platforms/android-30/android.jar libs/android.jar
 
       - name: 读取版本号（使用xmllint解析）
         id: version
