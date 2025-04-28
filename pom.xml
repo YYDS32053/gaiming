@@ -5,15 +5,25 @@
 
     <groupId>com.example</groupId>
     <artifactId>your-project-name</artifactId>
-    <version>1.0.0</version>    <!-- 注意，这里是 GitHub Actions 读取的版本号 -->
+    <version>1.0.6</version>
 
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>   <!-- Java 8 -->
+        <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>30</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/android.jar</systemPath>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
