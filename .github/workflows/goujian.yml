@@ -22,6 +22,15 @@ jobs:
         distribution: 'temurin'  # 使用 Temurin 作为 JDK 来源（这是 Adoptium 的发行版）
         java-version: '17'        # 选择适合的 JDK 版本（例如 JDK 17）
 
+    - name: Install repo tool
+      run: |
+        # 安装 repo 工具
+        sudo apt-get update
+        sudo apt-get install -y python3-pip
+        pip3 install repo
+        # 设置 repo 命令的别名
+        echo "export PATH=$PATH:/usr/local/bin" >> $GITHUB_ENV
+
     - name: Install Bazel dependencies
       run: |
         sudo apt-get update
