@@ -45,8 +45,8 @@ jobs:
 
     - name: Build Kernel
       run: |
-        # 检出内核源码并编译
-        repo init --depth=1 --u https://android.googlesource.com/kernel/manifest -b common-android14-6.1-2023-12 --repo-rev=v2.16
+        # 使用 repo init 正确的命令格式来初始化仓库
+        repo init --depth=1 --repo-url=https://android.googlesource.com/kernel/manifest -b common-android14-6.1-2023-12 --repo-rev=v2.16
         repo sync -j$(nproc --all)
         tools/bazel build //common:kernel_x86_64_dist
         
