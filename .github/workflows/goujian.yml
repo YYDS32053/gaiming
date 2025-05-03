@@ -16,12 +16,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2  # 获取仓库代码
 
-    - name: Set up Java (Adoptium)
+    - name: Set up Java (Adoptium Temurin)
       uses: actions/setup-java@v2
       with:
-        distribution: 'adoptium'  # 使用 Adoptium 作为 JDK 源
-        java-version: '17'        # 选择合适的 JDK 版本（例如 JDK 17）
-    
+        distribution: 'temurin'  # 使用 Temurin 作为 JDK 来源（这是 Adoptium 的发行版）
+        java-version: '17'        # 选择适合的 JDK 版本（例如 JDK 17）
+
     - name: Install Bazel dependencies
       run: |
         sudo apt-get update
