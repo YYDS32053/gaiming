@@ -1,4 +1,4 @@
-name: Build KernelSU for AVD
+name: Build and Compile System Service Hook
 
 on:
   push:
@@ -11,35 +11,48 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest  # 使用 GitHub 提供的最新 Ubuntu 虚拟机
-    
+
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2  # 获取仓库代码
 
-    - name: Set up Bazel
-      uses: pypa/virtualenv-action@v2  # 设置 Bazel 环境
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adoptopenjdk'
 
-    - name: Install Bazel dependencies
+    - name: Set up Android SDK
       run: |
+        # 安装 Android SDK 工具
         sudo apt-get update
-        sudo apt-get install -y build-essential clang python3 python3-pip
-        # 安装其他必要的构建工具和依赖
+        sudo apt-get install -y wget unzip
+        wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip -O sdk-tools.zip
+        unzip sdk-tools.zip -d $HOME/Android
+        rm sdk-tools.zip
+        echo "y" | $HOME/Android/cmdline-tools/bin/sdkmanager --sdk_root=$HOME/Android --licenses
+        $HOME/Android/cmdline-tools/bin/sdkmanager --sdk_root=$HOME/Android "platform-tools" "build-tools;30.0.3" "platforms;android-30"
 
-    - name: Set up Android environment
+    - name: Install Maven dependencies
       run: |
-        # 设置 Android 环境变量（例如 repo、Android SDK）
-        export ANDROID_HOME=$HOME/Android/Sdk
-        # 设置其他环境变量并安装 Android 构建工具
+        # 安装项目依赖
+        mvn install -DskipTests
 
-    - name: Build Kernel
+    - name: Install Android dependencies
       run: |
-        # 检出内核源码并编译
-        repo init --depth=1 --u https://android.googlesource.com/kernel/manifest -b common-android14-6.1-2023-12 --repo-rev=v2.16
-        repo sync -j$(nproc --all)
-        tools/bazel build //common:kernel_x86_64_dist
-        
-    - name: Build KernelSU
+        # 安装 Android 构建所需的依赖项
+        sudo apt-get install -y openjdk-8-jdk
+        export ANDROID_HOME=$HOME/Android
+        export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+        mvn install
+
+    - name: Build project with Maven
       run: |
-        # 使用构建的内核来构建 KernelSU，并进行相关的集成
-        tools/bazel run --config=fast --config=stamp --lto=none //common-modules/virtual-device:virtual_device_x86_64_dist -- --dist_dir=virt
-        # 其他与 KernelSU 集成相关的命令
+        # 构建项目并执行 Maven 编译
+        mvn clean compile
+
+    - name: Build APK or System Service Hook
+      run: |
+        # 如果这是一个 APK 构建或系统服务钩子构建，确保路径是正确的
+        mvn clean package -DskipTests
+
