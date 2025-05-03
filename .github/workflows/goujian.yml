@@ -1,0 +1,45 @@
+name: Build KernelSU for AVD
+
+on:
+  push:
+    branches:
+      - main   # 当推送到 main 分支时触发构建
+  pull_request:
+    branches:
+      - main   # 当提交 pull request 到 main 分支时触发构建
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 使用 GitHub 提供的最新 Ubuntu 虚拟机
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2  # 获取仓库代码
+
+    - name: Set up Bazel
+      uses: pypa/virtualenv-action@v2  # 设置 Bazel 环境
+
+    - name: Install Bazel dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential clang python3 python3-pip
+        # 安装其他必要的构建工具和依赖
+
+    - name: Set up Android environment
+      run: |
+        # 设置 Android 环境变量（例如 repo、Android SDK）
+        export ANDROID_HOME=$HOME/Android/Sdk
+        # 设置其他环境变量并安装 Android 构建工具
+
+    - name: Build Kernel
+      run: |
+        # 检出内核源码并编译
+        repo init --depth=1 --u https://android.googlesource.com/kernel/manifest -b common-android14-6.1-2023-12 --repo-rev=v2.16
+        repo sync -j$(nproc --all)
+        tools/bazel build //common:kernel_x86_64_dist
+        
+    - name: Build KernelSU
+      run: |
+        # 使用构建的内核来构建 KernelSU，并进行相关的集成
+        tools/bazel run --config=fast --config=stamp --lto=none //common-modules/virtual-device:virtual_device_x86_64_dist -- --dist_dir=virt
+        # 其他与 KernelSU 集成相关的命令
